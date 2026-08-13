@@ -1,0 +1,5 @@
+# Belt-and-braces: never let this file into git even if the plugin config drifts
+# and excludePaths is ever cleared. The plugin's own excludePaths already filters
+# this file, but if someone (or a future config reset) removes that pattern,
+# this .gitignore stops it from being staged.
+.obsidian/plugins/git-vault-sync/data.json
