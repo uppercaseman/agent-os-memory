@@ -3,7 +3,7 @@
 ## 🛰️ Platform Infrastructure
 - **System Director:** Hermes Agent (Local Runtime)
 - **Cloud Gateway:** OpenClaw Engine (Railway Backend)
-- **Primary Router:** OpenAI GPT-4o
+- **Primary Router:** MiniMax-M3 (`minimax` provider) — *default in `~/.hermes/config.yaml`*
 
 ## 🤖 Active Sub-Agent Allocation Matrix
 - [x] **Claude Code:** Dedicated Terminal Execution & Deep Refactoring
