@@ -76,7 +76,7 @@ Verification: 56/56 hermes-verify checks pass at `~/AOS/logs/verify-2026-08-14-f
 - **2026-08-14** OpenClaw stays a sibling agent inside Hermes, not a replacement. Path 2.
 - **2026-08-14** Docker skipped locally. 8GB RAM constraint; Railway handles containers.
 - **2026-08-14** Empty vault shadow at `/Users/terrymeyer/AOS 0.1/workspace/` deleted. Backend RTF at `/Users/terrymeyer/AOS 0.1/-agent-os-backend/` archived (not migrated); new clean compose in `~/AOS/backend/`.
-- **2026-08-14** Agent rename to Julian Goldie vocabulary: `mavis`→`oracle`, `claude-code`→`claude`. Plus `paperclip` named alias for `/chain`.
+- **2026-08-14** Agent rename to Julian Goldie vocabulary: `mavis`→`oracle`, `claude`→`claude`. Plus `paperclip` named alias for `/chain`.
 - **2026-08-14** Claude uses CLI subscription path (not API credits). ANTHROPIC_API_KEY stripped from subprocess env.
 - **2026-08-14** Memory recap mechanism: daily digest from plan + active tasks + recent logs, written to `02-State/recent-recap.md`. Each agent reads on startup.
 - **2026-08-14** Safe handoff scripts: `bin/pat-set.sh` (GitHub PAT), `bin/anthropic-credit-check.sh` (Claude API probe), `bin/node-upgrade.sh` (Node for OpenClaw). All read keys from stdin/file, never from chat.

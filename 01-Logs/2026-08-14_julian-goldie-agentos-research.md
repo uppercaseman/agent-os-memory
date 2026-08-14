@@ -84,7 +84,7 @@ From Julian's write-ups, the stack looks like this:
 
 6. **Glass Box concept over Obsidian.** His memory is *browsable inside the OS dashboard*, not just on disk. We could add an Obsidian-viewer panel to our dashboard plugin.
 
-7. **The brand / naming layer.** His whole pitch is "named agents you can talk to like Jarvis." Naming matters — it changes how you think about them. We're still calling ours "oracle" and "claude" — technical names. Renaming to "Hermes (director), Codex, Claude, Mavis (long-context), OpenClaw (web/browser), Glassbox (the OS view)" would match his UX.
+7. **The brand / naming layer.** His whole pitch is "named agents you can talk to like Jarvis." Naming matters — it changes how you think about them. We're still calling ours "oracle" and "claude" — technical names. Renaming to "Hermes (director), Codex, Claude, Oracle (long-context), OpenClaw (web/browser), Glassbox (the OS view)" would match his UX.
 
 ---
 

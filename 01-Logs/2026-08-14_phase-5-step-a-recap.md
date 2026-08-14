@@ -12,7 +12,7 @@
 
 **Verification (hermes-verify 36/36):**
 - Files exist, parse, executable bits correct
-- Recap on disk has Plan/Active/Agent roster sections; mentions Oracle+Claude; doesn't mention stale "Mavis"
+- Recap on disk has Plan/Active/Agent roster sections; mentions Oracle+Claude; doesn't mention stale "Oracle"
 - system_state.md reflects reality (✅ Live for Oracle+Claude, [x] for phases 1-4, [x] for step A)
 - `_recap.RECAP` loads at import, ~4,089 chars
 - `inject_into_context({})` injects recap as system prompt
