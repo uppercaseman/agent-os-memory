@@ -59,7 +59,7 @@ Named aliases (Julian Goldie vocabulary): `POST /paperclip/swarm` is the same as
 - [x] **Phase 3** — Router with `/health`, `/dispatch`, `/chain`, `/paperclip/swarm`. Vault log per call.
 - [x] **Phase 4** — Glass Box desktop plugin (manual reload required to test). Cleanup of legacy AOS paths into `~/AOS/_archive/`.
 - [x] **Phase 5 step A** — Memory recap mechanism (`~/AOS/bin/aos-recap.sh`).
-- [ ] **Phase 5 step B** — `bin/aos-up.sh` launcher.
+- [x] **Phase 5 step B** — `bin/aos-up.sh` launcher (`aos-up.sh` + `aos-down.sh` + `aos-status.sh`). 29/29 hermes-verify checks pass. Idempotent, PID-tracked, cold start ~2s, end-to-end dispatch verified.
 - [ ] **Phase 5 step C** — Codex fix (operator decides B1 top-up or B2 fallback).
 - [ ] **Phase 5 step D** — Railway deploy.
 - [ ] **Phase 5 step E** — Glass Box UI polish.
@@ -67,7 +67,7 @@ Named aliases (Julian Goldie vocabulary): `POST /paperclip/swarm` is the same as
 - [ ] **Phase 5 step G** — More agents (deferred).
 - [ ] **Phase 5 step H** — Auto-discovery in router (deferred).
 
-Verification: 56/56 hermes-verify checks pass at `~/AOS/logs/verify-2026-08-14-final/`.
+Verification: 56/56 hermes-verify checks pass at `~/AOS/logs/verify-2026-08-14-final/`. Phase 5 step A (recap): 36/36. Phase 5 step B (launcher): 29/29. Phase 5 cleanup sweep: 15/15.
 
 ---
 
@@ -80,3 +80,4 @@ Verification: 56/56 hermes-verify checks pass at `~/AOS/logs/verify-2026-08-14-f
 - **2026-08-14** Claude uses CLI subscription path (not API credits). ANTHROPIC_API_KEY stripped from subprocess env.
 - **2026-08-14** Memory recap mechanism: daily digest from plan + active tasks + recent logs, written to `02-State/recent-recap.md`. Each agent reads on startup.
 - **2026-08-14** Safe handoff scripts: `bin/pat-set.sh` (GitHub PAT), `bin/anthropic-credit-check.sh` (Claude API probe), `bin/node-upgrade.sh` (Node for OpenClaw). All read keys from stdin/file, never from chat.
+- **2026-08-14** Phase 5 launcher shipped (`aos-up.sh` + `aos-down.sh` + `aos-status.sh`). Cold start 2.2s end-to-end. Truncation-bug regression fixed: PID file is now appended on spawn, not truncated on script entry, so re-running `aos-up` with the fleet alive is a no-op. Verified 29/29 hermes-verify checks.

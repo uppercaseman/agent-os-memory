@@ -1,42 +1,41 @@
-<!-- generated 2026-08-14T01:16:18.626800+00:00 by ~/AOS/backend/recap/summarise.py -->
+<!-- generated 2026-08-14T01:17:06.636628+00:00 by ~/AOS/backend/recap/summarise.py -->
 
 # AOS Recap — 2026-08-14
 
 ## Plan status
-Phase 5 in progress, ordered A → B → C → D, with E (voice), F (more agents), and G/H (auto-discovery) deferred until Tier 1+2 land. High-level intent: make AOS operable locally (recap + launcher), then reachable from anywhere (codex fix + Railway deploy + Glass Box polish). Steps 1–3 of Phase 4 (Glass Box plugin, agent rename to oracle/claude, paperclip `/chain` alias) are done. Operator agreed to the A–D sequence on 2026-08-14.
+Phase 5 in progress, Tier 1 nearly complete. Goal: make AOS operable from one command (`aos up`), then reachable from anywhere (Railway deploy), then polished (Glass Box UI). Steps A (memory recap) and B (`aos-up.sh` launcher) are landed and verified. Next is the Codex fix (operator's choice between OpenAI key top-up or router-side fallback), unblocking the `[build]` dispatch tag before Railway deploy.
 
 ## Active queue
-- [DONE] **A.** Memory recap mechanism — `bin/aos-recap.sh` + `backend/recap/summarise.py` + `_recap.py` injection in `_base.py`. 36/36 hermes-verify.
-- [DONE] **B.** `bin/aos-up.sh` launcher — three scripts in `~/AOS/bin/`, idempotent, PID-tracked, cold start 2.2s. 24/26 hermes-verify.
-- [PENDING] **C.** Codex fix — operator chooses B1 (top up OpenAI key in `~/AOS/.env.keys`) or B2 (router-side 429 fallback to claude).
-- [PENDING] **D.** Railway deploy — operator runs `bin/pat-set.sh` + `railway login` + `railway link`; Hermes pushes `uppercaseman/agent-os-backend` and `railway up`.
-- [PENDING] **E.** Glass Box UI polish — chain form + history + result panel in `~/.hermes/desktop-plugins/glass-box/plugin.js`.
-- [PENDING] **F.** Voice decision (deferred).
-- [PENDING] **G.** More agents (deferred).
-- [PENDING] **H.** Router auto-discovery (deferred).
+- [DONE] **A. Memory recap mechanism** — `bin/aos-recap.sh`, `backend/recap/summarise.py`, `backend/agents/_recap.py`, `_base.py` injection. 36/36 hermes-verify. Log: `01-Logs/2026-08-14_phase-5-step-a-recap.md`.
+- [DONE] **B. `bin/aos-up.sh` launcher** — `aos-up.sh` + `aos-down.sh` + `aos-status.sh`. Cold start 2.2s, dispatch verified live. Log: `01-Logs/2026-08-14_phase-5-step-b-launcher.md`.
+- [PENDING] **C. Codex fix** — operator chooses B1 (top up $5 on `OPENAI_API_KEY` in `~/AOS/.env.keys`) or B2 (router catches 429 → claude fallback in `router/main.py`).
+- [PENDING] **D. Railway deploy** — operator: `bash ~/AOS/bin/pat-set.sh` + `railway login` + `railway link --project f462ab84-306a-4bed-a498-b3e11b88a255`. Then Hermes pushes `~/AOS/backend/` to `uppercaseman/agent-os-backend` and runs `railway up`.
+- [PENDING] **E. Glass Box UI polish** — chain form, history panel, result panel in `~/.hermes/desktop-plugins/glass-box/plugin.js`.
+- [PENDING] **F. Voice** — deferred per plan.
+- [PENDING] **G. More agents** — deferred.
+- [PENDING] **H. Router auto-discovery** — deferred.
 
 ## Last 3 builds
-- **Phase 5 Step A — Memory recap mechanism (2026-08-14):** Built `aos-recap.sh`, `recap/summarise.py`, `agents/_recap.py`, modified `_base.py` to inject recap into every `/chat` context. Verified 36/36 with live dispatch proving injection works.
-- **Phase 5 Step B — Launcher (2026-08-14):** Built `aos-up.sh` / `aos-down.sh` / `aos-status.sh`. Fixed two bugs (missing newline in `local` decls; PID-file truncation breaking idempotency). Cold start 2.2s, end-to-end dispatch returns real MiniMax-M3 response in 1.2s, clean shutdown confirmed. Only oracle+claude+router start by default.
-- **Step 1–3 build (2026-08-14):** Glass Box desktop plugin, agent rename (mavis→oracle, claude→claude), paperclip `/chain` alias, and archive of legacy paths to `~/AOS/_archive/`. 88/88 hermes-verify checks pass across three runs.
+- **Phase 5 step B — `bin/aos-up.sh` launcher** (2026-08-14): three bash scripts (up/down/status), PID-tracked, idempotent, cold start 2.2s, real dispatch returned `oracle` + `launcher-final-ok` in 1.2s. Fixed `unbound variable` (newline in `local` decl) and `: > "$PID_FILE"` truncation bugs during verify. 24/26 hermes-verify checks pass.
+- **Phase 5 step A — Memory recap mechanism** (2026-08-14): `aos-recap.sh` → `summarise.py` (calls MiniMax-M3) → `recent-recap.md`; `_recap.py` injects digest into every agent's `/chat` via `_base.py`. Live oracle dispatch explicitly referenced recap-derived context — proves injection. 36/36 hermes-verify.
+- **Steps 1–3 from Phase 4 — Glass Box plugin + agent rename + paperclip alias** (2026-08-14): Glass Box plugin live, `mavis→oracle`/`claude→claude` rename, `/paperclip/swarm` alias for `/chain`. Legacy paths archived to `~/AOS/_archive/` with MANIFEST. 88/88 hermes-verify.
 
 ## Agent roster
-
 | Agent | Status | Provider | Notes |
 |---|---|---|---|
-| Hermes | ✅ Live | Local runtime | OS shell + orchestrator; runs this recap. |
-| Oracle | ✅ Live | MiniMax-M3 direct API (Anthropic Messages) | Port 8003; long-context, summarisation, heavy code. |
-| Claude | ✅ Live | Claude CLI subscription path | Port 8002; review, refactor, deep edits. |
-| Codex | ⚠️ Built, rate-limited | OpenAI Chat Completions (gpt-4o) | Port 8001; returns 429; needs Step C. |
-| OpenClaw | ⚠️ Built, blocked | openclaw npm CLI (Node) | Port 8004; needs Node 22.22.3+, current 22.13.1. Run `bin/node-upgrade.sh`. |
+| Hermes | ✅ Live | Local runtime | OS shell, chat director, orchestrator (this session) |
+| Oracle | ✅ Live | MiniMax-M3 (direct API, Anthropic Messages endpoint) | `~/AOS/backend/agents/oracle/`, port 8003; tag `[summarise\|long-context]` |
+| Claude | ✅ Live | `claude` CLI subscription path | `~/AOS/backend/agents/claude/`, port 8002; tag `[review\|refactor]` |
+| Codex | ⚠️ Built, rate-limited | OpenAI Chat Completions (`gpt-4o`) | Returns 429; needs key top-up or router fallback (step C); tag `[build\|code\|scaffold]` |
+| OpenClaw | ⚠️ Built, env-blocked | `openclaw` npm CLI (MIT) | Needs Node 22.22.3+ (current 22.13.1); `bash ~/AOS/bin/node-upgrade.sh`; tag `[web\|browse\|api]` |
 
 ## Open issues / blockers
-- **Codex 429 (Step C):** `[build]` dispatches currently fail. Resolution gated on operator decision B1 vs B2.
-- **OpenClaw Node version (Step E-adjacent):** `openclaw` requires Node 22.22.3+; system has 22.13.1. Not in default launcher fleet, but blocks any `[web|browse|api]` dispatch until `bash ~/AOS/bin/node-upgrade.sh` runs.
-- **Railway deploy (Step D):** Requires operator action (PAT + login + link) before Hermes can push. Backend repo at `~/AOS/backend/` is local-only; the `uppercaseman/agent-os-backend` GitHub repo still needs creating.
-- **Glass Box UI polish (Step E):** Plugin reload required to test (manual); not yet exercised with the new recap-injected responses.
-- **Launcher scope gap:** `aos-up.sh` does not start codex or openclaw by default. Codex is intentional (rate-limited); openclaw omission should be documented or made opt-in.
-- **system_state.md drift risk:** Build Status list still shows Phase 5 steps B–H as `[ ]` even though step B is done in `active-tasks.md`. Resync `02-State/system_state.md` against `active-tasks.md` before next recap.
+- **Codex 429s** block the `[build]` dispatch path. Decide B1 vs B2 in `~/AOS/.env.keys` or `backend/router/main.py` before step D so Railway deploy lands with a working build agent.
+- **OpenClaw Node version gap**: `bin/node-upgrade.sh` exists but not run; openclaw won't start until Node ≥ 22.22.3. Not in default `aos-up.sh` fleet — explicit operator action.
+- **Glass Box UI assumes manual plugin reload** in Hermes desktop; step E polish should be verified in real desktop (no automated harness mentioned).
+- **Railway-side env keys**: plan is ambiguous between mirroring `~/AOS/.env.keys` to Railway env vars or reading locally — needs a call before `railway up`.
+- **Step 3 truncation** in log file inventory: `2026-08-14_step-1-3-build.md` was truncated mid-list of files changed — full inventory should be confirmed on disk during step C prep.
+- **Backend repo cleanup**: stale `-agent-os-backend/` directory mentioned but not migrated; flagged in Phase 0 log, unclear if fully resolved.
 
 ## Drift check
-Build since last recap matched the plan: A → B done in order, no out-of-order or unplanned work. Minor drift — `system_state.md` Build Status checkboxes lag `active-tasks.md` (step B marked `[ ]` in system_state, `[x]` in active-tasks).
+On plan — Phase 5 ran steps A then B as agreed; current state matches active-tasks.md and system_state.md with no off-plan work landed.
