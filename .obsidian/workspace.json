@@ -4,26 +4,6 @@
     "type": "split",
     "children": [
       {
-        "id": "c8a9b8a59fac1a71",
-        "type": "tabs",
-        "children": [
-          {
-            "id": "64089cee5c681165",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "02-State/system_state.md.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "system_state.md"
-            }
-          }
-        ]
-      },
-      {
         "id": "e31261a19296d075",
         "type": "tabs",
         "children": [
@@ -115,7 +95,6 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "02-State/system_state.md.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -134,7 +113,6 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "02-State/system_state.md.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
@@ -177,7 +155,6 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "02-State/system_state.md.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
@@ -206,15 +183,16 @@
       "git-vault-sync:Git Vault Sync: Review changes & sync": false
     }
   },
-  "active": "64089cee5c681165",
+  "active": "3dac0fa88f91e3e9",
   "lastOpenFiles": [
-    "01-Logs/2026-08-14_agent-matrix-verify.md",
-    "Welcome.md",
+    "02-State/system_state.md",
     "02-State/system_state.md.md",
     "Agent Operating System 0.1/03-Brain/SOUL.md",
     "Agent Operating System 0.1/Welcome.md",
     "Agent Operating System 0.1/03-Brain",
     "Agent Operating System 0.1",
+    "01-Logs/2026-08-14_agent-matrix-verify.md",
+    "Welcome.md",
     "03-Brain/SOUL.md.sb-ba2def7e-m5f9PJ",
     "03-Brain/SOUL.md",
     "03-Brain/Welcome.md.zip",
