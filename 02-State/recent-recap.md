@@ -1,41 +1,42 @@
-<!-- generated 2026-08-14T01:19:45.580397+00:00 by ~/AOS/backend/recap/summarise.py -->
+<!-- generated 2026-08-14T01:31:59.183859+00:00 by ~/AOS/backend/recap/summarise.py -->
 
 # AOS Recap — 2026-08-14
 
 ## Plan status
-Phase 5 in progress — "make it operable, then make it reachable." Operator agreed 2026-08-14. Tier 1 (recap mechanism + launcher scripts) is fully shipped and verified. Tier 2 (Railway deploy + Glass Box UI polish) is next but gated on operator action (Codex key decision, GitHub PAT, Railway login). Voice, more agents, and router auto-discovery are deferred.
+Phase 5 in progress. Plan: make the AOS operable first (recap mechanism + launcher), then reachable (Railway deploy + UI polish), then defer voice, more agents, and auto-discovery. Operator agreed 2026-08-14 to the A→B→C→D order. Steps A (recap) and B (launcher) are done; next is C (codex fix), then D (Railway), then E (Glass Box UI).
 
 ## Active queue
-- [DONE] **A. Memory recap mechanism** — `~/AOS/bin/aos-recap.sh` + `~/AOS/backend/recap/summarise.py` + `~/AOS/backend/agents/_recap.py` + modified `_base.py`. 36/36 hermes-verify.
-- [DONE] **B. `bin/aos-up.sh` launcher** — three scripts (up/down/status), PID-tracked, idempotent, 2.2s cold start, 1.2s end-to-end dispatch verified. 29/29 hermes-verify.
-- [PENDING] **C. Codex fix** — operator picks B1 (top up OpenAI key in `~/AOS/.env.keys`) or B2 (router-side fallback to claude on 429/5xx). Goal: `[build]` dispatch returns 200.
-- [PENDING] **D. Railway deploy** — operator runs `bash ~/AOS/bin/pat-set.sh` + `railway login` + `railway link --project f462ab84-306a-4bed-a498-b3e11b88a255`. Then Hermes pushes `~/AOS/backend/` to fresh `uppercaseman/agent-os-backend` and `railway up`.
+- [DONE] **A. Memory recap mechanism** — `bin/aos-recap.sh`, `backend/recap/summarise.py`, `agents/_recap.py`, modified `_base.py`. 36/36 hermes-verify.
+- [DONE] **B. `bin/aos-up.sh` launcher** — `aos-up.sh`, `aos-down.sh`, `aos-status.sh`. Idempotent, PID-tracked, cold start 2.2s, end-to-end dispatch verified (~1.2s oracle response).
+- [PENDING] **C. Codex fix** — operator chooses B1 (top up OpenAI key in `~/AOS/.env.keys`) or B2 (router-side fallback to claude on 429).
+- [PENDING] **D. Railway deploy** — operator runs `bash ~/AOS/bin/pat-set.sh` + `railway login` + `railway link --project f462ab84-306a-4bed-a498-b3e11b88a255`; Hermes pushes `~/AOS/backend/` to `uppercaseman/agent-os-backend` and runs `railway up`.
 - [PENDING] **E. Glass Box UI polish** — chain form, history panel, result panel in `~/.hermes/desktop-plugins/glass-box/plugin.js`.
-- [PENDING] **F. Voice (ElevenLabs)** — deferred.
+- [PENDING] **F. Voice decision** — deferred.
 - [PENDING] **G. More agents** — deferred.
 - [PENDING] **H. Router auto-discovery** — deferred.
 
 ## Last 3 builds
-- **Step A — Memory recap mechanism** (`2026-08-14_phase-5-step-a-recap.md`): built `aos-recap.sh` + `summarise.py` + `_recap.py`, wired injection into `_base.py` so every `/chat` preloads cross-session context. 36/36 hermes-verify; oracle dispatch response explicitly contains recap-derived text.
-- **Step B — `bin/aos-up.sh` launcher** (`2026-08-14_phase-5-step-b-launcher.md`): three bash scripts, PID-tracked, idempotent. Fixed two bugs during verify (missing newline in `start_service()` decl, premature PID-file truncate). 2.2s cold start; real MiniMax-M3 dispatch returns `{"agent":"oracle","output":"launcher-final-ok","duration_ms":1168}`.
-- **Steps 1–3 (Phase 4 final)** (`2026-08-14_step-1-3-build.md`): Glass Box plugin + agent rename (mavis→oracle, claude→claude) + `POST /paperclip/swarm` alias. 88/88 hermes-verify across the four runs. Legacy paths archived to `~/AOS/_archive/{legacy-backend,legacy-vault-populated,legacy-vault-empty-shadow}` with `MANIFEST.md`.
+- **Phase 5 Step A — recap mechanism** (2026-08-14): built `bin/aos-recap.sh` + `recap/summarise.py` + `agents/_recap.py`; wired context injection into `_base.py`. 36/36 hermes-verify; oracle dispatch response explicitly mentions recap-derived context, proving injection works. Digests live at `~/AOS/workspace/02-State/recent-recap.md`.
+- **Phase 5 Step B — launcher** (2026-08-14): `aos-up.sh` / `aos-down.sh` / `aos-status.sh`. Caught two bugs during verify (missing newline before `local` declarations; PID-file truncation breaking idempotency) — both fixed. Cold start 2.2s, dispatch 1.2s, clean shutdown with port sweep.
+- **Steps 1–3 + cleanup** (2026-08-14): Glass Box plugin + agent rename (mavis→oracle) + paperclip `/chain` alias. 88/88 hermes-verify across three runs. Legacy AOS paths archived under `~/AOS/_archive/` with `MANIFEST.md`.
 
 ## Agent roster
+
 | Agent | Status | Provider | Notes |
 |---|---|---|---|
-| Hermes | ✅ Live (this session) | Local runtime | OS shell + orchestrator |
-| Oracle | ✅ Live, port 8003 | MiniMax-M3 (Anthropic Messages API) | Long-context, summarisation; default in `~/.hermes/config.yaml` |
-| Claude | ✅ Live, port 8002 | `claude` CLI subscription (`ANTHROPIC_API_KEY` stripped) | Review/refactor path |
-| Codex | ⚠️ Built, rate-limited 429 | OpenAI Chat Completions (`gpt-4o`) | Needs OpenAI top-up or router B2 fallback |
-| OpenClaw | ⚠️ Built, needs Node ≥22.22.3 | npm CLI (`openclaw/openclaw`, MIT) | Currently on Node 22.13.1; `bash ~/AOS/bin/node-upgrade.sh` |
+| Hermes | ✅ Live | Local runtime | OS shell / orchestrator (this session) |
+| Oracle | ✅ Live | MiniMax-M3 (Anthropic Messages API) | `agents/oracle/`, port 8003; default for `[summarise|long-context]` |
+| Claude | ✅ Live | `claude` CLI subscription (ANTHROPIC_API_KEY stripped) | `agents/claude/`, port 8002; default for `[review|refactor]` |
+| Codex | ⚠️ Built, rate-limited (429) | OpenAI Chat Completions (`gpt-4o`) | `agents/codex/`, port 8001; needs B1 top-up or B2 fallback |
+| OpenClaw | ⚠️ Built, blocked | `openclaw` npm CLI (MIT) | `agents/openclaw/`, port 8004; needs Node 22.22.3+ (currently 22.13.1); upgrade via `bash ~/AOS/bin/node-upgrade.sh` |
+| Router | ✅ Live | Local FastAPI | `router/main.py`, port 8090; tag-dispatches + `/paperclip/swarm` alias |
 
 ## Open issues / blockers
-- **Codex blocked** — `[build]` dispatches return 429. Operator decision pending (B1 or B2 path). Until resolved, the `[build|code|scaffold]` → codex route in `router/main.py` is dead.
-- **OpenClaw blocked** — requires Node 22.22.3+; current is 22.13.1. Upgrade script exists at `~/AOS/bin/node-upgrade.sh`. `[web|browse|api]` route currently unserved.
-- **Railway deploy gated on operator** — three manual steps not yet run: `bin/pat-set.sh`, `railway login` (browser OAuth), `railway link --project f462ab84-306a-4bed-a498-b3e11b88a255`. Until done, public URL is unreachable and dispatch-from-phone cannot be verified.
-- **Launcher fleet defaults** — `aos-up.sh` only starts oracle + claude + router. Codex and openclaw are intentionally skipped until their blockers clear; status script correctly reports them down but this can mislead anyone expecting a full fleet.
-- **Glass Box plugin** — currently requires manual reload to test (per Phase 4 log); UI polish (step E) not yet done.
-- **`system_state.md` says "not yet deployed"** for Railway — accurate but will go stale fast once deploy lands; recap should regenerate it.
+- **Codex 429** blocks any `[build|code|scaffold]` dispatch today. No fallback wired into `router/main.py` yet — operator must pick B1 vs B2 before step C can be considered resolved.
+- **OpenClaw Node version** (22.13.1 < required 22.22.3) blocks `[web|browse|api]` dispatches. Fix is `bash ~/AOS/bin/node-upgrade.sh`; not scheduled in active queue.
+- **Railway deploy pending operator actions:** GitHub PAT via `bin/pat-set.sh`, `railway login`, `railway link`. Until these run, Hermes cannot push or `railway up`.
+- **Glass Box UI** currently only supports single-step dispatch; chain form + history panel + result panel still missing — manual reload required to test changes to `~/.hermes/desktop-plugins/glass-box/plugin.js`.
+- **AGENT_URLS** in `router/main.py` is still hand-edited (drift risk called out in plan as Step G); not urgent but flagged as the pattern that broke prior AOS attempts.
 
 ## Drift check
-On plan: Phase 5 steps A and B shipped in the agreed order with hermes-verify + build logs + queue/state updates. No unplanned side-quests. Step C awaiting operator decision per plan.
+Build since last recap matched the plan exactly: A then B from `active-tasks.md` both shipped with full hermes-verify and matching `01-Logs/` entries; `system_state.md` and `active-tasks.md` updated in lockstep with the build logs. No divergence.
